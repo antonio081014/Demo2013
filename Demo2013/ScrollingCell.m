@@ -42,6 +42,7 @@ const static CGFloat PULL_THRESHOLD = 120.f;
     }
 }
 
+// 1st called.
 - (void)scrollingEnded
 {
     [self.delegate scrollingCellDidEndPulling:self];
@@ -53,18 +54,7 @@ const static CGFloat PULL_THRESHOLD = 120.f;
     self.scrollView.transform = CGAffineTransformIdentity;
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    if (!decelerate) {
-        [self scrollingEnded];
-    }
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    [self scrollingEnded];
-}
-
+// 2nd called.
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     CGFloat offset = self.scrollView.contentOffset.x;
@@ -76,6 +66,21 @@ const static CGFloat PULL_THRESHOLD = 120.f;
         self.decelerationDistanceRatio = pullOffset / offset;
     }
 }
+
+// 3rd called.
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate) {
+        [self scrollingEnded];
+    }
+}
+
+// 4th called.
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self scrollingEnded];
+}
+
 
 - (void)awakeFromNib
 {
