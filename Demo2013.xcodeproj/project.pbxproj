@@ -14,6 +14,7 @@
 		960467E61B8F839E0034964E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960467E51B8F839E0034964E /* Images.xcassets */; };
 		960467E91B8F839E0034964E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 960467E71B8F839E0034964E /* LaunchScreen.xib */; };
 		960467F51B8F839E0034964E /* Demo2013Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 960467F41B8F839E0034964E /* Demo2013Tests.m */; };
+		960468001B8F83C80034964E /* ScrollingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 960467FF1B8F83C80034964E /* ScrollingCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		960467EE1B8F839E0034964E /* Demo2013Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Demo2013Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		960467F31B8F839E0034964E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		960467F41B8F839E0034964E /* Demo2013Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Demo2013Tests.m; sourceTree = "<group>"; };
+		960467FE1B8F83C80034964E /* ScrollingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCell.h; sourceTree = "<group>"; };
+		960467FF1B8F83C80034964E /* ScrollingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollingCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,8 @@
 				960467DD1B8F839E0034964E /* AppDelegate.m */,
 				960467DF1B8F839E0034964E /* ViewController.h */,
 				960467E01B8F839E0034964E /* ViewController.m */,
+				960467FE1B8F83C80034964E /* ScrollingCell.h */,
+				960467FF1B8F83C80034964E /* ScrollingCell.m */,
 				960467E21B8F839E0034964E /* Main.storyboard */,
 				960467E51B8F839E0034964E /* Images.xcassets */,
 				960467E71B8F839E0034964E /* LaunchScreen.xib */,
@@ -222,6 +227,7 @@
 				960467E11B8F839E0034964E /* ViewController.m in Sources */,
 				960467DE1B8F839E0034964E /* AppDelegate.m in Sources */,
 				960467DB1B8F839E0034964E /* main.m in Sources */,
+				960468001B8F83C80034964E /* ScrollingCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
