@@ -61,7 +61,6 @@ const static CGFloat UICollectionCellDefaultHeight = 50.f;
                   layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"CollectionView: %@", NSStringFromCGRect(collectionView.bounds));
     return CGSizeMake(CGRectGetWidth(collectionView.bounds), UICollectionCellDefaultHeight);
 }
 

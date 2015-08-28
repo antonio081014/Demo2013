@@ -9,9 +9,18 @@
 #import "SpringyFlowLayout.h"
 @interface SpringyFlowLayout()
 @property (nonatomic, strong) UIDynamicAnimator *dynamicAnimator;
-@property (nonatomic, strong) NSMutableDictionary *dynamicBehaviorDict;
+@property (nonatomic, strong) NSMutableSet *visibleIndexPathsSet;
+@property (nonatomic) CGFloat latestDelta;
 @end
 @implementation SpringyFlowLayout
+
+- (NSMutableSet *)visibleIndexPathsSet
+{
+    if (!_visibleIndexPathsSet) {
+        _visibleIndexPathsSet = [NSMutableSet set];
+    }
+    return _visibleIndexPathsSet;
+}
 
 - (UIDynamicAnimator *)dynamicAnimator
 {
@@ -25,28 +34,60 @@
 {
     [super prepareLayout];
     
-    CGSize contentSize = [self collectionViewContentSize];
-    // Not a good idea to load all of the attributes here at one time.
-    NSArray *items = [super layoutAttributesForElementsInRect:CGRectMake(0, 0, contentSize.width, contentSize.height)];
+    // Need to overflow our actual visible rect slightly to avoid flickering.
+    CGRect originalRect = (CGRect){.origin = self.collectionView.bounds.origin, .size = self.collectionView.frame.size};
+    CGRect visibleRect = CGRectInset(originalRect, -100, -100);
     
-    // Checking behaviors count is critical here.
-    /**
-     * <UIDynamicAnimator: 0x17552430> (0.056427s) in <SpringyFlowLayout: 0x1763fc30> {{0, 0}, {320, 4790}}: 
-     * body <PKPhysicsBody> type:<Rectangle> representedObject:[<UICollectionViewLayoutAttributes: 0x1754eef0> 
-     * index path: (<NSIndexPath: 0x17525650> {length = 2, path = 0 - 0}); frame = (0 0; 320 50); ] 0x17648c40  PO:(159.999985,25.000000) AN:(0.000000) VE:(0.000000,0.000000) AV:(0.000000) dy:(1) cc:(0) ar:(1) rs:(0) fr:(0.200000) re:(0.200000) de:(1.000000) gr:(0) 
-     * without representedObject for item <UICollectionViewLayoutAttributes: 0x17540650> 
-     * index path: (<NSIndexPath: 0x17558960> {length = 2, path = 0 - 0}); frame = (0 0; 320 50);
-     */
-    if (self.dynamicAnimator.behaviors.count == 0) {
-        for (UICollectionViewLayoutAttributes *item in items) {
-            UIAttachmentBehavior *spring = [[UIAttachmentBehavior alloc] initWithItem:item attachedToAnchor:item.center];
-            spring.length = 0;
-            spring.damping = 0.5;
-            spring.frequency = 0.8;
+    NSArray *itemsInVisibleRectArray = [super layoutAttributesForElementsInRect:visibleRect];
+    
+    NSSet *itemsIndexPathsInVisibleRectSet = [NSSet setWithArray:[itemsInVisibleRectArray valueForKey:@"indexPath"]];
+    
+    // Step 1: Remove any behaviours that are no longer visible.
+    NSArray *noLongerVisibleBehaviours = [self.dynamicAnimator.behaviors filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIAttachmentBehavior *behaviour, NSDictionary *bindings) {
+        BOOL currentlyVisible = [itemsIndexPathsInVisibleRectSet member:[[[behaviour items] firstObject] indexPath]] != nil;
+        return !currentlyVisible;
+    }]];
+    
+    [noLongerVisibleBehaviours enumerateObjectsUsingBlock:^(id obj, NSUInteger index, BOOL *stop) {
+        [self.dynamicAnimator removeBehavior:obj];
+        [self.visibleIndexPathsSet removeObject:[[[obj items] firstObject] indexPath]];
+    }];
+    
+    // Step 2: Add any newly visible behaviours.
+    // A "newly visible" item is one that is in the itemsInVisibleRect(Set|Array) but not in the visibleIndexPathsSet
+    NSArray *newlyVisibleItems = [itemsInVisibleRectArray filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *item, NSDictionary *bindings) {
+        BOOL currentlyVisible = [self.visibleIndexPathsSet member:item.indexPath] != nil;
+        return !currentlyVisible;
+    }]];
+    
+    CGPoint touchLocation = [self.collectionView.panGestureRecognizer locationInView:self.collectionView];
+    
+    [newlyVisibleItems enumerateObjectsUsingBlock:^(UICollectionViewLayoutAttributes *item, NSUInteger idx, BOOL *stop) {
+        CGPoint center = item.center;
+        UIAttachmentBehavior *springBehaviour = [[UIAttachmentBehavior alloc] initWithItem:item attachedToAnchor:center];
+        
+        springBehaviour.length = 0.0f;
+        springBehaviour.damping = 0.5f;
+        springBehaviour.frequency = 0.8f;
+        
+        // If our touchLocation is not (0,0), we'll need to adjust our item's center "in flight"
+        if (!CGPointEqualToPoint(CGPointZero, touchLocation)) {
+            CGFloat yDistanceFromTouch = fabsf(touchLocation.y - springBehaviour.anchorPoint.y);
+            CGFloat xDistanceFromTouch = fabsf(touchLocation.x - springBehaviour.anchorPoint.x);
+            CGFloat scrollResistance = (yDistanceFromTouch + xDistanceFromTouch) / 1500.0f;
             
-            [self.dynamicAnimator addBehavior:spring];
+            if (self.latestDelta < 0) {
+                center.y += MAX(self.latestDelta, self.latestDelta*scrollResistance);
+            }
+            else {
+                center.y += MIN(self.latestDelta, self.latestDelta*scrollResistance);
+            }
+            item.center = center;
         }
-    }
+        
+        [self.dynamicAnimator addBehavior:springBehaviour];
+        [self.visibleIndexPathsSet addObject:item.indexPath];
+    }];
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
@@ -59,31 +100,11 @@
     return [self.dynamicAnimator layoutAttributesForCellAtIndexPath:indexPath];
 }
 
-//- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-//{
-//    UICollectionViewLayoutAttributes *item = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
-//    UIDynamicBehavior *behavior = [self.dynamicBehaviorDict valueForKey:itemIndexPath.description];
-//    [self.dynamicAnimator removeBehavior:behavior];
-//    [self.dynamicBehaviorDict removeObjectForKey:itemIndexPath.description];
-//    return item;
-//}
-//
-//- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-//{
-//    UICollectionViewLayoutAttributes *item = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
-//    UIAttachmentBehavior *spring = [[UIAttachmentBehavior alloc] initWithItem:item attachedToAnchor:item.center];
-//    spring.length = 0;
-//    spring.damping = 0.5;
-//    spring.frequency = 0.8;
-//    [self.dynamicAnimator addBehavior:spring];
-//    [self.dynamicBehaviorDict setValue:spring forKey:itemIndexPath.description];
-//    return item;
-//}
-
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
     UIScrollView *scrollView = (UIScrollView *)self.collectionView;
     CGFloat scrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
+    self.latestDelta = scrollDelta;
     
     CGPoint touchLocation = [scrollView.panGestureRecognizer locationInView:scrollView];
     
@@ -95,6 +116,13 @@
         UICollectionViewLayoutAttributes *item = [spring.items firstObject];
         CGPoint center = item.center;
         center.y += scrollDelta * MIN(scrollResistance, 1.0);
+        if (scrollDelta < 0) {
+            center.y += MAX(scrollDelta, scrollDelta * scrollResistance);
+        }
+        else {
+            center.y += MIN(scrollDelta, scrollDelta * scrollResistance);
+        }
+
         item.center = center;
         
         [self.dynamicAnimator updateItemUsingCurrentState:item];

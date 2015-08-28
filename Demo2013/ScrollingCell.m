@@ -122,8 +122,6 @@ const static CGFloat PULL_THRESHOLD = 120.f;
     CGRect bounds = CGRectMake(contentView.bounds.origin.x, contentView.bounds.origin.y, 320, contentView.bounds.size.height);
     self.contentView.frame = CGRectMake(self.contentView.frame.origin.x, self.contentView.frame.origin.y, 320, self.contentView.frame.size.height);
     
-    NSLog(@"%@", NSStringFromCGRect(bounds));
-    
     CGFloat pageWidth = bounds.size.width + PULL_THRESHOLD;
     self.scrollView.frame = CGRectMake(0, 0, pageWidth, bounds.size.height);
     self.scrollView.contentSize = CGSizeMake(pageWidth * 2, bounds.size.height);
