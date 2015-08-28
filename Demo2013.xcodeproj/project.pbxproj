@@ -15,6 +15,7 @@
 		960467E91B8F839E0034964E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 960467E71B8F839E0034964E /* LaunchScreen.xib */; };
 		960467F51B8F839E0034964E /* Demo2013Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 960467F41B8F839E0034964E /* Demo2013Tests.m */; };
 		960468001B8F83C80034964E /* ScrollingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 960467FF1B8F83C80034964E /* ScrollingCell.m */; };
+		9640921B1B90CF7C00D2D22D /* SpringyFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9640921A1B90CF7C00D2D22D /* SpringyFlowLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		960467F41B8F839E0034964E /* Demo2013Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Demo2013Tests.m; sourceTree = "<group>"; };
 		960467FE1B8F83C80034964E /* ScrollingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCell.h; sourceTree = "<group>"; };
 		960467FF1B8F83C80034964E /* ScrollingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollingCell.m; sourceTree = "<group>"; };
+		964092191B90CF7C00D2D22D /* SpringyFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringyFlowLayout.h; sourceTree = "<group>"; };
+		9640921A1B90CF7C00D2D22D /* SpringyFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpringyFlowLayout.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,8 @@
 				960467E01B8F839E0034964E /* ViewController.m */,
 				960467FE1B8F83C80034964E /* ScrollingCell.h */,
 				960467FF1B8F83C80034964E /* ScrollingCell.m */,
+				964092191B90CF7C00D2D22D /* SpringyFlowLayout.h */,
+				9640921A1B90CF7C00D2D22D /* SpringyFlowLayout.m */,
 				960467E21B8F839E0034964E /* Main.storyboard */,
 				960467E51B8F839E0034964E /* Images.xcassets */,
 				960467E71B8F839E0034964E /* LaunchScreen.xib */,
@@ -225,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				960467E11B8F839E0034964E /* ViewController.m in Sources */,
+				9640921B1B90CF7C00D2D22D /* SpringyFlowLayout.m in Sources */,
 				960467DE1B8F839E0034964E /* AppDelegate.m in Sources */,
 				960467DB1B8F839E0034964E /* main.m in Sources */,
 				960468001B8F83C80034964E /* ScrollingCell.m in Sources */,
@@ -424,6 +430,7 @@
 				960467FA1B8F839E0034964E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		960467FB1B8F839E0034964E /* Build configuration list for PBXNativeTarget "Demo2013Tests" */ = {
 			isa = XCConfigurationList;
@@ -432,6 +439,7 @@
 				960467FD1B8F839E0034964E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
