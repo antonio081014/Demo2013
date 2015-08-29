@@ -2,3 +2,5 @@
 *.xcuserstate
 
 *.xcscheme
+
+*xcschememanagement.plist
